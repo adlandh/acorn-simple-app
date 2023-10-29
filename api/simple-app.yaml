@@ -1,0 +1,123 @@
+openapi: 3.0.3
+info:
+  title: Simple App
+  version: 1.0.0
+servers:
+  - url: 'http://localhost:8080'
+components:
+  schemas:
+    User:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+    UserRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+paths:
+  /:
+    get:
+      operationId: healthCheck
+      description: health check endpoint
+      responses:
+        '200':
+          description: ok
+          content:
+            text/plain:
+              schema:
+                type: string
+                default: Ok
+  /api/user:
+    post:
+      operationId: createUser
+      description: Create new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRequest'
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: bad request
+  /api/user/{id}:
+    get:
+      operationId: getUser
+      description: GET user info
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: user id
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: not found
+    post:
+      operationId: updateUser
+      description: Update user info
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: user id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRequest'
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: bad request
+        '404':
+          description: not found
+    delete:
+      operationId: deleteUser
+      description: Delete user
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: user id
+      responses:
+        '200':
+          description: ok
+        '404':
+          description: not found
