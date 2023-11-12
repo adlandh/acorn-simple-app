@@ -1,49 +1,39 @@
 version: 3
 tasks:
-    api:
-        desc: generating http handlers
+    generate:
+        desc: generating http handlers && m
         sources:
-            -  api/simple-app.yaml
+            - api/simple-app.yaml
+            - internal/simple-app/domain/interfaces.go
         generates:
             - internal/simple-app/driver/openapi_gen.go
+            - internal/simple-app/domain/mocks/*.go
         cmds:
-            - oapi-codegen -old-config-style -generate types,server -o "internal/simple-app/driver/openapi_gen.go" -package "driver" "api/simple-app.yaml"
-    mocks:
-        desc: generating mocks
-        sources:
-            - interfaces.go
-        generates:
-            - mocks/*.go
-        dir: "internal/simple-app/domain"
-        cmds:
-            - mockery --name ApplicationInterface
-            - mockery --name UserStorage
+            - go generate ./...
     test:
         desc: running tests
         dir: "internal/"
         deps:
-            - api
-            - mocks
+            - generate
         cmds:
             - go test -cover -race -v ./...
     lint:
         desc: running linter
         deps:
-            - api
-            - mocks
+            - generate
         dir: "internal/"
         cmds:
             - golangci-lint run
     run:
         desc: deploy app to acorn
         deps:
-            - api
+            - generate
         cmds:
             - acorn run -n simple-app
     dev:
         desc: deploy app to acorn in dev-mod
         deps:
-            - api
+            - generate
         cmds:
             - acorn dev -n simple-app
     stop:

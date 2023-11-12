@@ -11,6 +11,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+//go:generate oapi-codegen -old-config-style -generate types,server -o "openapi_gen.go" -package "driver" "../../../api/simple-app.yaml"
 type HTTPServer struct {
 	app domain.ApplicationInterface
 }

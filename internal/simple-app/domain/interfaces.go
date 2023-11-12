@@ -8,7 +8,7 @@ import (
 	"github.com/google/uuid"
 )
 
-// ApplicationInterface in an interface for application.Application
+//go:generate mockery --name=ApplicationInterface
 type ApplicationInterface interface {
 	GetUser(ctx context.Context, id uuid.UUID) (name string, err error)
 	CreateUser(ctx context.Context, name string) (id uuid.UUID, err error)
@@ -18,6 +18,7 @@ type ApplicationInterface interface {
 
 var ErrorNotFound = fmt.Errorf("not found")
 
+//go:generate mockery --name=UserStorage
 type UserStorage interface {
 	Store(ctx context.Context, id, name string) (err error)
 	Read(ctx context.Context, id string) (name string, err error)
